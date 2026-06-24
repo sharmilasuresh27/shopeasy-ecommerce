@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout – ShopEasy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#7c3aed;--a:#f59e0b;--g:#10b981;--r:#ef4444;--bg:#f5f3ff;--txt:#1e1b4b;--muted:#6b7280;--border:#e5e7eb}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt)}
+nav{background:linear-gradient(135deg,#3b0764,#6d28d9);height:68px;display:flex;align-items:center;padding:0 4%;gap:16px;box-shadow:0 4px 24px rgba(109,40,217,.45)}
+.logo{font-size:22px;font-weight:900;color:#fff;text-decoration:none}.logo span{color:#fbbf24}
+.wrap{max-width:1000px;margin:36px auto;padding:0 20px}
+.ptitle{font-size:26px;font-weight:800;margin-bottom:8px}
+.bread{font-size:13px;color:var(--muted);margin-bottom:28px;display:flex;align-items:center;gap:8px}
+.bread a{color:var(--p);text-decoration:none;font-weight:600}
+.steps-bar{display:flex;gap:0;margin-bottom:36px;background:#fff;border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:0 4px 16px rgba(124,58,237,.06)}
+.step{flex:1;text-align:center;padding:16px;font-size:13px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px;border-right:1px solid var(--border);transition:all .3s}
+.step:last-child{border-right:none}
+.step.active{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff}
+.step.done{background:var(--g);color:#fff}
+.layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:20px;border:1.5px solid var(--border);padding:28px;margin-bottom:20px;box-shadow:0 4px 16px rgba(124,58,237,.06)}
+.card h3{font-size:17px;font-weight:800;margin-bottom:20px;color:var(--txt);display:flex;align-items:center;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+.fgrp{margin-bottom:16px}
+.fgrp label{display:block;font-size:13px;font-weight:700;color:var(--txt);margin-bottom:7px}
+.fgrp input,.fgrp textarea,.fgrp select{width:100%;padding:13px 15px;border:2px solid var(--border);border-radius:12px;font-size:14px;outline:none;transition:all .2s;font-family:'Poppins',sans-serif;color:var(--txt);background:#faf9ff}
+.fgrp input:focus,.fgrp textarea:focus,.fgrp select:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.08)}
+.fgrp textarea{resize:vertical;min-height:70px}
+.otp-row{display:flex;gap:10px;align-items:flex-end}
+.otp-row input{flex:1}
+.send-otp{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:13px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.send-otp:hover{transform:translateY(-1px)}
+.send-otp:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.otp-verified{color:var(--g);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;margin-top:8px}
+/* PAYMENT METHODS */
+.pay-opts{display:flex;flex-direction:column;gap:12px}
+.pay-opt{border:2px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:14px;position:relative}
+.pay-opt:hover{border-color:var(--p);box-shadow:0 4px 14px rgba(124,58,237,.12)}
+.pay-opt.selected{border-color:var(--p);background:#faf9ff;box-shadow:0 4px 18px rgba(124,58,237,.15)}
+.pay-radio{width:20px;height:20px;border:2px solid var(--border);border-radius:50%;flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.pay-opt.selected .pay-radio{border-color:var(--p);background:var(--p)}
+.pay-opt.selected .pay-radio::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%;display:block}
+.pay-label{flex:1}.pay-name{font-size:15px;font-weight:700;margin-bottom:2px}.pay-sub{font-size:12px;color:var(--muted)}
+.pay-icon{font-size:28px}
+/* card form */
+.card-form{display:none;padding:16px;background:#f5f3ff;border-radius:12px;margin-top:12px;animation:fadeIn .3s ease}
+.card-form.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.upi-form{display:none;padding:16px;background:#f5f3ff;border-radius:12px;margin-top:12px;animation:fadeIn .3s ease}
+.upi-form.show{display:block}
+/* ORDER SUMMARY */
+.sum-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.sum-item:last-child{border-bottom:none}
+.si-img{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0}
+.si-img img{width:100%;height:100%;object-fit:cover}
+.si-info{flex:1}.si-name{font-size:13px;font-weight:700;line-height:1.3}.si-qty{font-size:12px;color:var(--muted)}
+.si-price{font-size:14px;font-weight:800;color:var(--p)}
+.srow{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:10px}
+.stotal{display:flex;justify-content:space-between;font-size:19px;font-weight:900;border-top:2px solid var(--border);padding-top:14px;margin-top:14px}
+.stotal span:last-child{color:var(--p)}
+.place-btn{width:100%;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;font-family:'Poppins',sans-serif;box-shadow:0 6px 20px rgba(124,58,237,.35);transition:all .25s}
+.place-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,58,237,.5)}
+.place-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.err{color:var(--r);font-size:13px;font-weight:600;margin-top:10px;display:flex;align-items:center;gap:6px}
+/* SUCCESS SCREEN */
+.success-screen{display:none;text-align:center;padding:60px 20px;background:#fff;border-radius:22px;border:1.5px solid var(--border)}
+.success-ico{font-size:80px;animation:bounce 1s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:9998}
+.conf{position:absolute;width:10px;height:10px;border-radius:2px;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:14px 20px;border-radius:18px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 32px rgba(124,58,237,.45);animation:tin .4s cubic-bezier(.34,1.56,.64,1);border-left:4px solid #fbbf24}
+@keyframes tin{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
+</head>
+<body>
+<nav><a href="/" class="logo">🛍️ Shop<span>Easy</span></a></nav>
+<div class="wrap">
+  <div class="ptitle">Checkout</div>
+  <div class="bread"><a href="/">Home</a> › <a href="/cart.html">Cart</a> › Checkout</div>
+  <div class="steps-bar">
+    <div class="step active" id="step1">📍 Address</div>
+    <div class="step" id="step2">💳 Payment</div>
+    <div class="step" id="step3">✅ Confirm</div>
+  </div>
+
+  <div id="checkout-form">
+    <div class="layout">
+      <!-- LEFT -->
+      <div>
+        <!-- ADDRESS -->
+        <div class="card">
+          <h3>📍 Delivery Address</h3>
+          <div class="form-row">
+            <div class="fgrp"><label>Full Name</label><input type="text" id="name" placeholder="Your full name"></div>
+            <div class="fgrp"><label>Mobile Number</label>
+              <div class="otp-row">
+                <input type="tel" id="phone" placeholder="10-digit mobile" maxlength="10" oninput="otpVerified=false;document.getElementById('otp-section').style.display='none'">
+                <button class="send-otp" id="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+              </div>
+              <div id="otp-section" style="display:none;margin-top:10px">
+                <div class="otp-row">
+                  <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6">
+                  <button class="send-otp" onclick="verifyOTP()">Verify</button>
+                </div>
+                <div style="font-size:12px;color:var(--muted);margin-top:6px">Demo OTP: <strong>123456</strong></div>
+              </div>
+              <div id="otp-verified-msg" class="otp-verified" style="display:none">✅ Mobile verified!</div>
+            </div>
+          </div>
+          <div class="fgrp"><label>Full Address</label><textarea id="address" placeholder="House/Flat No, Street, Area..."></textarea></div>
+          <div class="form-row">
+            <div class="fgrp"><label>City</label><input type="text" id="city" placeholder="City"></div>
+            <div class="fgrp"><label>Pincode</label><input type="text" id="pin" placeholder="6-digit pincode" maxlength="6"></div>
+          </div>
+          <div class="fgrp"><label>State</label>
+            <select id="state"><option value="">Select State</option><option>Tamil Nadu</option><option>Maharashtra</option><option>Karnataka</option><option>Delhi</option><option>Gujarat</option><option>Rajasthan</option><option>Uttar Pradesh</option><option>West Bengal</option><option>Telangana</option><option>Andhra Pradesh</option><option>Kerala</option><option>Punjab</option></select>
+          </div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="card">
+          <h3>💳 Payment Method</h3>
+          <div class="pay-opts">
+            <div class="pay-opt selected" onclick="selectPay('cod',this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">💵</div>
+              <div class="pay-label"><div class="pay-name">Cash on Delivery</div><div class="pay-sub">Pay when your order arrives</div></div>
+            </div>
+            <div class="pay-opt" onclick="selectPay('card',this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">💳</div>
+              <div class="pay-label"><div class="pay-name">Credit / Debit Card</div><div class="pay-sub">Visa, Mastercard, RuPay accepted</div></div>
+            </div>
+            <div class="card-form" id="card-form">
+              <div class="fgrp"><label>Card Number</label><input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="fgrp"><label>Expiry</label><input type="text" placeholder="MM/YY" maxlength="5"></div>
+                <div class="fgrp"><label>CVV</label><input type="text" placeholder="•••" maxlength="3"></div>
+              </div>
+              <div class="fgrp"><label>Name on Card</label><input type="text" placeholder="As printed on card"></div>
+            </div>
+            <div class="pay-opt" onclick="selectPay('upi',this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">📱</div>
+              <div class="pay-label"><div class="pay-name">UPI Payment</div><div class="pay-sub">PhonePe, GPay, Paytm, BHIM</div></div>
+            </div>
+            <div class="upi-form" id="upi-form">
+              <div class="fgrp"><label>UPI ID</label><input type="text" id="upi-id" placeholder="yourname@upi"></div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/200px-Paytm_Logo_%28standalone%29.svg.png" style="height:28px;object-fit:contain" alt="Paytm">
+                <span style="font-size:22px">📱</span><span style="font-size:13px;color:var(--muted);line-height:1.4">Pay via any UPI app<br>using your UPI ID</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="err" id="err-msg" style="display:none">⚠️ <span id="err-text"></span></div>
+      </div>
+
+      <!-- RIGHT: ORDER SUMMARY -->
+      <div>
+        <div class="card" style="position:sticky;top:20px">
+          <h3>🛍️ Order Summary</h3>
+          <div id="sum-items"></div>
+          <div style="margin-top:16px">
+            <div class="srow"><span>Subtotal</span><span id="sum-sub">₹0</span></div>
+            <div class="srow"><span>Delivery</span><span id="sum-ship">₹49</span></div>
+            <div class="stotal"><span>Total</span><span id="sum-total">₹0</span></div>
+          </div>
+          <button class="place-btn" id="place-btn" onclick="placeOrder()">🎉 Place Order</button>
+          <div style="display:flex;justify-content:center;gap:16px;margin-top:14px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--muted)">🔒 Secure Checkout</span>
+            <span style="font-size:11px;color:var(--muted)">↩️ Easy Returns</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-ico">🎉</div>
+    <h2 style="font-size:28px;font-weight:900;margin:16px 0 8px;color:var(--txt)">Order Placed!</h2>
+    <p style="color:var(--muted);font-size:16px;margin-bottom:8px">Your order has been confirmed successfully.</p>
+    <div id="success-id" style="background:#f5f3ff;padding:12px 20px;border-radius:12px;font-weight:700;color:var(--p);font-size:15px;display:inline-block;margin:16px 0"></div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:28px">You'll receive updates as your order progresses.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="/orders.html" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;text-decoration:none;padding:14px 28px;border-radius:30px;font-weight:700;font-size:15px;box-shadow:0 6px 20px rgba(124,58,237,.35)">📦 Track Order</a>
+      <a href="/" style="background:#fff;color:var(--p);text-decoration:none;padding:14px 28px;border-radius:30px;font-weight:700;font-size:15px;border:2px solid var(--p)">🛍️ Continue Shopping</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let payMethod='cod', otpVerified=false, otpSent=false;
+const EMOJIS={Electronics:'📱',Footwear:'👟',Clothing:'👕',default:'📦'};
+
+if(!localStorage.getItem('token')){location.href='/login.html'}
+
+function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]')}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400)},2800)}
+function showErr(msg){const e=document.getElementById('err-msg');e.style.display='flex';document.getElementById('err-text').textContent=msg;setTimeout(()=>e.style.display='none',3500)}
+
+function selectPay(m, el){
+  payMethod=m;
+  document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card-form').classList.remove('show');
+  document.getElementById('upi-form').classList.remove('show');
+  if(m==='card')document.getElementById('card-form').classList.add('show');
+  if(m==='upi')document.getElementById('upi-form').classList.add('show');
+}
+
+function formatCard(el){
+  let v=el.value.replace(/\D/g,'').substring(0,16);
+  el.value=v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+function sendOTP(){
+  const phone=document.getElementById('phone').value.trim();
+  if(phone.length!==10||!/^\d{10}$/.test(phone)){showErr('Enter valid 10-digit mobile number');return}
+  document.getElementById('otp-section').style.display='block';
+  const btn=document.getElementById('send-otp-btn');
+  btn.disabled=true;btn.textContent='Sent ✓';
+  otpSent=true;
+  toast('📱 OTP sent! (Demo: 123456)');
+  setTimeout(()=>{btn.disabled=false;btn.textContent='Resend'},30000);
+}
+
+function verifyOTP(){
+  const otp=document.getElementById('otp-input').value.trim();
+  if(otp==='123456'){
+    otpVerified=true;
+    document.getElementById('otp-section').style.display='none';
+    document.getElementById('otp-verified-msg').style.display='flex';
+    toast('✅ Mobile number verified!');
+  }else{showErr('Invalid OTP. Use 123456 for demo')}
+}
+
+function renderSummary(){
+  const cart=getCart();
+  const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const ship=sub>=999?0:49;
+  document.getElementById('sum-sub').textContent='₹'+sub.toLocaleString('en-IN');
+  document.getElementById('sum-ship').textContent=ship===0?'FREE':'₹'+ship;
+  document.getElementById('sum-total').textContent='₹'+(sub+ship).toLocaleString('en-IN');
+  document.getElementById('sum-items').innerHTML=cart.map(item=>`
+    <div class="sum-item">
+      <div class="si-img">${item.image?`<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'">`:''}${EMOJIS[item.category]||EMOJIS.default}</div>
+      <div class="si-info"><div class="si-name">${item.name}</div><div class="si-qty">Qty: ${item.qty}</div></div>
+      <div class="si-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
+    </div>`).join('');
+}
+
+function confetti(){
+  const c=document.createElement('div');c.className='confetti';document.body.appendChild(c);
+  const colors=['#7c3aed','#f59e0b','#10b981','#ef4444','#3b82f6','#ec4899'];
+  for(let i=0;i<80;i++){
+    const d=document.createElement('div');d.className='conf';
+    d.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px`;
+    c.appendChild(d);
+  }
+  setTimeout(()=>c.remove(),4000);
+}
+
+async function placeOrder(){
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const address=document.getElementById('address').value.trim();
+  const city=document.getElementById('city').value.trim();
+  const pin=document.getElementById('pin').value.trim();
+  const state=document.getElementById('state').value;
+
+  if(!name)return showErr('Enter your full name');
+  if(!phone||phone.length!==10)return showErr('Enter valid 10-digit mobile number');
+  if(!otpVerified)return showErr('Please verify your mobile number with OTP');
+  if(!address)return showErr('Enter delivery address');
+  if(!city)return showErr('Enter city name');
+  if(!pin||pin.length!==6)return showErr('Enter valid 6-digit pincode');
+  if(!state)return showErr('Select your state');
+
+  const cart=getCart();
+  if(!cart.length){showErr('Your cart is empty!');return}
+
+  const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const ship=sub>=999?0:49;
+  const total=sub+ship;
+  const fullAddress=`${address}, ${city}, ${state} - ${pin}`;
+  const items=cart.map(i=>({product:i.id,name:i.name,qty:i.qty,price:i.price,image:i.image||''}));
+
+  const btn=document.getElementById('place-btn');
+  btn.disabled=true;btn.textContent='Placing order...';
+
+  try{
+    const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+localStorage.getItem('token')},body:JSON.stringify({items,total,address:fullAddress,phone,paymentMethod:payMethod})});
+    const d=await r.json();
+    if(r.ok){
+      localStorage.removeItem('cart');
+      document.getElementById('checkout-form').style.display='none';
+      document.getElementById('success-screen').style.display='block';
+      document.getElementById('success-id').textContent='Order ID: #'+d._id.slice(-10).toUpperCase();
+      confetti();
+      document.querySelector('.steps-bar').querySelectorAll('.step').forEach(s=>{s.classList.remove('active');s.classList.add('done')});
+    }else{showErr(d.error||'Something went wrong');btn.disabled=false;btn.textContent='🎉 Place Order'}
+  }catch(e){showErr('Server error. Try again.');btn.disabled=false;btn.textContent='🎉 Place Order'}
+}
+
+renderSummary();
+</script>
+</body>
+</html>

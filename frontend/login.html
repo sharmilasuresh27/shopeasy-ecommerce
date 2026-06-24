@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login – ShopEasy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;min-height:100vh;background:linear-gradient(135deg,#2e1065,#4c1d95,#7c3aed);display:flex;flex-direction:column}
+nav{padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:22px;font-weight:800;color:#fff;text-decoration:none}.logo span{color:#fbbf24}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden}
+.float{position:absolute;border-radius:50%;filter:blur(70px);opacity:.2}
+.f1{width:350px;height:350px;background:#a78bfa;top:-100px;left:-100px}
+.f2{width:280px;height:280px;background:#f59e0b;bottom:-80px;right:-80px}
+.card{background:#fff;border-radius:28px;padding:44px;width:100%;max-width:440px;position:relative;z-index:1;box-shadow:0 24px 80px rgba(0,0,0,.25)}
+.card-icon{font-size:44px;text-align:center;margin-bottom:8px}
+.card h2{text-align:center;font-size:26px;font-weight:800;color:#1e1b4b;margin-bottom:4px}
+.card-sub{text-align:center;color:#6b7280;font-size:14px;margin-bottom:32px}
+.inp-wrap{margin-bottom:18px}
+.inp-wrap label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:7px}
+.inp-wrap input{width:100%;padding:13px 16px;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;outline:none;transition:all .2s;font-family:'Poppins',sans-serif;color:#1e1b4b;background:#faf9ff}
+.inp-wrap input:focus{border-color:#7c3aed;background:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.08)}
+.btn{width:100%;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:15px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;transition:all .25s;font-family:'Poppins',sans-serif;box-shadow:0 6px 20px rgba(124,58,237,.35)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.45)}
+.err{color:#ef4444;font-size:13px;text-align:center;margin-top:14px;font-weight:600;min-height:20px}
+.switch{text-align:center;margin-top:22px;font-size:14px;color:#6b7280}
+.switch a{color:#7c3aed;font-weight:700;text-decoration:none}
+.switch a:hover{text-decoration:underline}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider hr{flex:1;border:none;border-top:1px solid #e5e7eb}
+.divider span{font-size:12px;color:#9ca3af;font-weight:500}
+.toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:14px 22px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 30px rgba(124,58,237,.4);animation:tin .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid #fbbf24}
+@keyframes tin{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
+</head>
+<body>
+<nav><a href="/" class="logo">Shop<span>Easy</span></a></nav>
+<div class="main">
+  <div class="f1 float"></div><div class="f2 float"></div>
+  <div class="card">
+    <div class="card-icon">👋</div>
+    <h2>Welcome Back!</h2>
+    <p class="card-sub">Login to continue shopping</p>
+    <div class="inp-wrap"><label>Email Address</label><input type="email" id="email" placeholder="you@example.com" autofocus></div>
+    <div class="inp-wrap"><label>Password</label><input type="password" id="pass" placeholder="Your password"></div>
+    <button class="btn" onclick="login()">Login to ShopEasy →</button>
+    <div class="err" id="err"></div>
+    <div class="switch">Don't have an account? <a href="/register.html">Create one free →</a></div>
+  </div>
+</div>
+<script>
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2800)}
+if(localStorage.getItem('token'))location.href='/';
+async function login(){
+  const email=document.getElementById('email').value.trim();
+  const pass=document.getElementById('pass').value;
+  const err=document.getElementById('err');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Please fill all fields';return}
+  const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+  const d=await r.json();
+  if(r.ok){
+    localStorage.setItem('token',d.token);localStorage.setItem('userName',d.name);localStorage.setItem('userRole',d.role||'user');
+    toast('✅ Welcome back, '+d.name+'!');
+    setTimeout(()=>{
+      if(d.role==='admin')location.href='/admin-dashboard.html';
+      else location.href='/';
+    },800);
+  }else{err.textContent='❌ '+d.error}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+</script>
+</body>
+</html>

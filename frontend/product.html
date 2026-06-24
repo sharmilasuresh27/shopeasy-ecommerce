@@ -1,0 +1,170 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Product – ShopEasy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#7c3aed;--p2:#6d28d9;--a:#f59e0b;--bg:#f5f3ff;--card:#fff;--txt:#1e1b4b;--muted:#6b7280;--border:#e5e7eb}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt)}
+nav{background:linear-gradient(135deg,#4c1d95,#7c3aed);padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99;box-shadow:0 4px 20px rgba(109,40,217,.4)}
+.logo{font-size:22px;font-weight:800;color:#fff;text-decoration:none}.logo span{color:#fbbf24}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nav-r a{color:rgba(255,255,255,.85);text-decoration:none;font-size:14px;font-weight:500;padding:8px 14px;border-radius:10px;transition:all .2s}
+.nav-r a:hover{background:rgba(255,255,255,.15)}
+.nav-cart{background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important;font-weight:700!important;padding:9px 20px!important;border-radius:24px!important;display:flex!important;align-items:center;gap:8px}
+.badge{background:#ef4444;color:#fff;border-radius:50%;width:22px;height:22px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.upill{background:rgba(255,255,255,.18);color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.wrap{max-width:960px;margin:40px auto;padding:0 24px}
+.bread{font-size:13px;color:var(--muted);margin-bottom:20px}.bread a{color:var(--p);text-decoration:none;font-weight:600}
+.detail-card{background:#fff;border-radius:24px;padding:40px;border:1.5px solid var(--border);box-shadow:0 8px 40px rgba(124,58,237,.1);display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+@media(max-width:640px){.detail-card{grid-template-columns:1fr;gap:24px;padding:24px}}
+.prod-img{border-radius:20px;height:300px;display:flex;align-items:center;justify-content:center;font-size:110px;position:relative;width:100%;object-fit:cover}
+.detail-discount{position:absolute;top:15px;left:15px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:14px;font-weight:800;padding:8px 16px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.ci-e{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.ci-f{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.ci-c{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.ci-d{background:linear-gradient(135deg,#fee2e2,#fecaca)}
+.cat-tag{color:var(--p);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.prod-name{font-size:28px;font-weight:800;line-height:1.2;margin-bottom:14px}
+.prod-desc{color:var(--muted);font-size:14px;line-height:1.8;margin-bottom:24px;padding:16px;background:#faf9ff;border-radius:12px;border-left:3px solid var(--p)}
+.price-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:8px}
+.price-big{font-size:36px;font-weight:900;color:var(--p)}
+.price-orig{font-size:16px;color:var(--muted);text-decoration:line-through}
+.discount-tag{background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px}
+.stock-row{font-size:13px;color:#10b981;font-weight:600;margin-bottom:28px;display:flex;align-items:center;gap:6px}
+.qty-row{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.qty-label{font-size:14px;font-weight:600;color:var(--txt)}
+.qty-ctrl{display:flex;align-items:center;gap:10px;background:#f5f3ff;border-radius:14px;padding:6px 14px}
+.qty-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--p);font-weight:700;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all .2s}
+.qty-btn:hover{background:var(--p);color:#fff}
+.qty-num{font-size:16px;font-weight:800;min-width:24px;text-align:center}
+.add-big{
+  width:100%;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;
+  padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;
+  transition:all .25s;box-shadow:0 6px 20px rgba(124,58,237,.35);margin-bottom:12px;
+  font-family:'Poppins',sans-serif;
+}
+.add-big:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.45)}
+.buy-now{width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif}
+.buy-now:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,.45)}
+.notify-btn{width:100%;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:14px;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;margin-top:10px}
+.notify-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.4)}
+.trust-row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:500}
+.toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:14px 22px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 30px rgba(124,58,237,.4);animation:tin .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid #fbbf24}
+@keyframes tin{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.loader{display:flex;gap:8px;justify-content:center;padding:80px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--p);animation:dotb .7s alternate infinite}
+.dot:nth-child(2){animation-delay:.2s;background:#f59e0b}
+.dot:nth-child(3){animation-delay:.4s;background:#10b981}
+@keyframes dotb{from{transform:translateY(0);opacity:1}to{transform:translateY(-16px);opacity:.3}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">Shop<span>Easy</span></a>
+  <div class="nav-r">
+    <div id="nav-user"></div>
+    <a href="/cart.html" class="nav-cart">🛒 <span class="badge" id="cart-count">0</span></a>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="bread"><a href="/">← Back to Products</a></div>
+  <div id="area"><div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+</div>
+<script>
+const CI={Electronics:'ci-e',Footwear:'ci-f',Clothing:'ci-c',default:'ci-d'};
+const EMOJIS={Electronics:'📱',Footwear:'👟',Clothing:'👕',default:'📦'};
+const id=new URLSearchParams(location.search).get('id');
+if(!id)location.href='/';
+let qty=1;
+
+function getCart(){return JSON.parse(localStorage.getItem('cart')||'[]')}
+function saveCart(c){localStorage.setItem('cart',JSON.stringify(c));updateBadge()}
+function updateBadge(){const el=document.getElementById('cart-count');if(el)el.textContent=getCart().reduce((s,i)=>s+i.qty,0)}
+function logout(){localStorage.removeItem('token');localStorage.removeItem('userName');location.href='/'}
+function renderNav(){
+  const el=document.getElementById('nav-user');if(!el)return;
+  const name=localStorage.getItem('userName');
+  el.innerHTML=name?`<span class="upill">👤 ${name}</span><a href="/orders.html">Orders</a><a href="#" onclick="logout()">Logout</a>`:`<a href="/login.html">Login</a><a href="/register.html">Register</a>`;
+}
+function toast(msg){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2800)
+}
+function changeQty(d){qty=Math.max(1,qty+d);document.getElementById('qty-n').textContent=qty}
+function addCart(pid,name,price){
+  const c=getCart(),ex=c.find(i=>i.id===pid);
+  if(ex)ex.qty+=qty;else c.push({id:pid,name,price,qty});
+  saveCart(c);toast('🛒 Added '+qty+' × '+name);
+}
+async function load(){
+  const r=await fetch('/api/products/'+id);
+  const p=await r.json();
+  document.title=p.name+' – ShopEasy';
+  document.getElementById('area').innerHTML=`
+    <div class="detail-card">
+      <div style="position:relative">
+        <img src="${p.image}" class="prod-img" alt="${p.name}" onerror="this.src='/image/default.jpg'">
+        ${p.discount>0?`<div class="detail-discount">${p.discount}% OFF</div>`:''}
+      </div>
+      <div>
+        <div class="cat-tag">${p.category}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.description}</div>
+        <div class="price-row">
+          <div class="price-big">₹${p.price.toLocaleString('en-IN')}</div>
+          ${p.originalPrice>0?`<div class="price-orig">~~₹${p.originalPrice.toLocaleString('en-IN')}~~</div>`:''}
+          ${p.discount>0?`<div class="discount-tag">Save ${p.discount}%</div>`:''}
+        </div>
+        <div class="stock-row">✅ ${p.stock} units in stock</div>
+        <div class="qty-row">
+          <span class="qty-label">Qty:</span>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span class="qty-num" id="qty-n">1</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+        <button class="add-big" onclick="addCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${p.price})">🛒 Add to Cart</button>
+        <button class="buy-now" onclick="addCart('${p._id}','${p.name.replace(/'/g,"\\'")}',${p.price});location.href='/cart.html'">⚡ Buy Now</button>
+        <button class="notify-btn" onclick="subscribePriceDrop('${p._id}')">🔔 Notify Me</button>
+        <div class="trust-row">
+          <div class="trust-item">🔒 Secure Payment</div>
+          <div class="trust-item">🚚 Free Delivery</div>
+          <div class="trust-item">↩️ Easy Returns</div>
+          <div class="trust-item">✅ 100% Genuine</div>
+        </div>
+      </div>
+    </div>`;
+}
+renderNav();updateBadge();load();
+
+async function subscribePriceDrop(productId){
+  const token=localStorage.getItem('token');
+  if(!token){
+    alert('Please login to subscribe to price drop alerts');
+    location.href='/login.html';
+    return;
+  }
+  try{
+    const r=await fetch('/api/notifications/subscribe',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({productId})
+    });
+    const d=await r.json();
+    if(r.ok){
+      toast('✅ '+d.message);
+    }else{
+      toast('❌ '+d.error);
+    }
+  }catch(err){
+    toast('❌ Failed to subscribe');
+  }
+}
+</script>
+</body>
+</html>

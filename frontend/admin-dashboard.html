@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard – ShopEasy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;min-height:100vh;background:linear-gradient(135deg,#1e1b4b,#312e81,#4c1d95);color:#fff}
+nav{background:rgba(30,27,75,.95);backdrop-filter:blur(10px);height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;border-bottom:1px solid rgba(124,58,237,.3);position:sticky;top:0;z-index:999}
+.logo{font-size:24px;font-weight:900;color:#fff;text-decoration:none}.logo span{color:#fbbf24}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-btn{background:rgba(255,255,255,.1);color:#fff;border:none;padding:10px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.nav-btn:hover{background:rgba(255,255,255,.2)}
+.nav-btn.logout{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.nav-btn.logout:hover{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.container{max-width:1400px;margin:0 auto;padding:30px 20px}
+.tabs{display:flex;gap:8px;margin-bottom:30px;background:rgba(30,27,75,.5);padding:8px;border-radius:16px}
+.tab-btn{flex:1;background:none;border:none;color:rgba(255,255,255,.7);padding:14px 20px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(124,58,237,.2);color:#fff}
+.tab-btn.active{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;font-weight:700;margin-bottom:20px;color:#fbbf24}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,.8);margin-bottom:8px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:rgba(30,27,75,.5);border:2px solid rgba(124,58,237,.3);border-radius:12px;color:#fff;font-size:14px;outline:none;transition:all .2s;font-family:'Poppins',sans-serif}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#7c3aed;background:rgba(30,27,75,.8)}
+.form-group textarea{resize:vertical;min-height:100px}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;box-shadow:0 4px 20px rgba(124,58,237,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.45)}
+table{width:100%;border-collapse:collapse}
+th{background:rgba(124,58,237,.3);color:#fff;font-size:13px;font-weight:700;padding:14px 16px;text-align:left}
+td{background:rgba(255,255,255,.02);color:rgba(255,255,255,.9);font-size:14px;padding:14px 16px;border-bottom:1px solid rgba(124,58,237,.1)}
+tr:hover td{background:rgba(124,58,237,.1)}
+.action-btn{padding:8px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-right:6px}
+.btn-edit{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.btn-edit:hover{background:linear-gradient(135deg,#d97706,#b45309)}
+.btn-delete{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.btn-delete:hover{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.status-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
+.status-confirmed{background:rgba(59,130,246,.2);color:#60a5fa}
+.status-processing{background:rgba(245,158,11,.2);color:#fbbf24}
+.status-shipped{background:rgba(139,92,246,.2);color:#a78bfa}
+.status-out_for_delivery{background:rgba(236,72,153,.2);color:#f472b6}
+.status-delivered{background:rgba(16,185,129,.2);color:#34d399}
+.status-cancelled{background:rgba(239,68,68,.2);color:#f87171}
+.toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:14px 22px;border-radius:16px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 30px rgba(124,58,237,.4);animation:tin .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid #fbbf24}
+@keyframes tin{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:9999}
+.modal.active{display:flex}
+.modal-content{background:linear-gradient(135deg,#1e1b4b,#312e81);border:1px solid rgba(124,58,237,.3);border-radius:24px;padding:32px;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.modal-content h3{font-size:22px;font-weight:800;margin-bottom:20px;color:#fbbf24}
+.modal-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
+.btn-cancel{background:rgba(255,255,255,.1);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{background:rgba(255,255,255,.2)}
+.empty-state{text-align:center;padding:60px 20px;color:rgba(255,255,255,.6)}
+.empty-state-icon{font-size:64px;margin-bottom:16px}
+.product-img{width:50px;height:50px;object-fit:cover;border-radius:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:30px}
+.stat-card{background:rgba(255,255,255,.05);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:24px;transition:all .3s}
+.stat-card:hover{transform:translateY(-4px);border-color:rgba(124,58,237,.4)}
+.stat-icon{font-size:36px;margin-bottom:12px}
+.stat-value{font-size:32px;font-weight:800;color:#fbbf24;margin-bottom:4px}
+.stat-label{font-size:14px;color:rgba(255,255,255,.7);font-weight:600}
+.chart-container{background:rgba(255,255,255,.02);border:1px solid rgba(124,58,237,.2);border-radius:16px;padding:20px;margin-bottom:20px}
+.chart-container h3{font-size:16px;font-weight:700;color:#fbbf24;margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:200px;padding:10px 0}
+.bar{flex:1;background:linear-gradient(180deg,#7c3aed,#6d28d9);border-radius:8px 8px 0 0;transition:all .3s;min-width:30px;position:relative}
+.bar:hover{background:linear-gradient(180deg,#8b5cf6,#7c3aed)}
+.bar-label{position:absolute;bottom:-25px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(255,255,255,.6);white-space:nowrap}
+.bar-value{position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:#fbbf24}
+.user-status{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
+.user-active{background:rgba(16,185,129,.2);color:#34d399}
+.user-blocked{background:rgba(239,68,68,.2);color:#f87171}
+.user-admin{background:rgba(124,58,237,.2);color:#a78bfa}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">Shop<span>Easy</span> <span style="font-size:12px;font-weight:600;background:#fbbf24;color:#1e1b4b;padding:4px 10px;border-radius:20px;margin-left:8px">ADMIN</span></a>
+  <div class="nav-right">
+    <span id="adminName" style="font-size:14px;font-weight:600"></span>
+    <a href="/" class="nav-btn">🏠 View Store</a>
+    <button class="nav-btn logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('products')">📦 Products</button>
+    <button class="tab-btn" onclick="switchTab('add')">➕ Add Product</button>
+    <button class="tab-btn" onclick="switchTab('orders')">📋 Orders</button>
+    <button class="tab-btn" onclick="switchTab('users')">👥 Users</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">📈 Analytics</button>
+  </div>
+
+  <!-- Dashboard Tab -->
+  <div id="dashboard-tab" class="tab-content active">
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="card">
+      <h2>📋 Recent Orders</h2>
+      <div id="recentOrdersTable"></div>
+    </div>
+  </div>
+
+  <!-- Products Tab -->
+  <div id="products-tab" class="tab-content">
+    <div class="card">
+      <h2>📦 All Products</h2>
+      <div id="productsTable"></div>
+    </div>
+  </div>
+
+  <!-- Add Product Tab -->
+  <div id="add-tab" class="tab-content">
+    <div class="card">
+      <h2>➕ Add New Product</h2>
+      <form id="addProductForm" onsubmit="addProduct(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="pName" required placeholder="e.g., iPhone 15 Pro">
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="pCategory" required>
+              <option value="">Select Category</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Footwear">Footwear</option>
+              <option value="Clothing">Clothing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price (₹) *</label>
+            <input type="number" id="pPrice" required placeholder="e.g., 99999">
+          </div>
+          <div class="form-group">
+            <label>Original Price (₹)</label>
+            <input type="number" id="pOriginalPrice" placeholder="e.g., 119999">
+          </div>
+          <div class="form-group">
+            <label>Discount (%)</label>
+            <input type="number" id="pDiscount" placeholder="e.g., 17">
+          </div>
+          <div class="form-group">
+            <label>Stock</label>
+            <input type="number" id="pStock" value="10">
+          </div>
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" id="pImage" placeholder="/image/filename.jpg">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="pDescription" placeholder="Product description..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">➕ Add Product</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div id="orders-tab" class="tab-content">
+    <div class="card">
+      <h2>📋 All Orders</h2>
+      <div id="ordersTable"></div>
+    </div>
+  </div>
+
+  <!-- Users Tab -->
+  <div id="users-tab" class="tab-content">
+    <div class="card">
+      <h2>👥 All Users</h2>
+      <div id="usersTable"></div>
+    </div>
+  </div>
+
+  <!-- Analytics Tab -->
+  <div id="analytics-tab" class="tab-content">
+    <div class="chart-container">
+      <h3>📈 Sales Over Time</h3>
+      <div id="salesChart"></div>
+    </div>
+    <div class="chart-container">
+      <h3>📊 Sales by Category</h3>
+      <div id="categoryChart"></div>
+    </div>
+    <div class="card">
+      <h2>🏆 Top Selling Products</h2>
+      <div id="topProductsTable"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3>✏️ Update Product</h3>
+    <form id="editProductForm" onsubmit="updateProduct(event)">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label>Price (₹) *</label>
+        <input type="number" id="editPrice" required>
+      </div>
+      <div class="form-group">
+        <label>Original Price (₹)</label>
+        <input type="number" id="editOriginalPrice">
+      </div>
+      <div class="form-group">
+        <label>Discount (%)</label>
+        <input type="number" id="editDiscount">
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" id="editStock">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const token=localStorage.getItem('token');
+const role=localStorage.getItem('userRole');
+console.log('Token:', token ? 'Present' : 'Missing');
+console.log('Role:', role);
+console.log('User Name:', localStorage.getItem('userName'));
+
+// Verify admin status on load
+async function verifyAdmin(){
+  if(!token){
+    console.error('No token found');
+    location.href='/login.html';
+    return;
+  }
+  try{
+    const r=await fetch('/api/auth/me',{
+      headers:{'Authorization':'Bearer '+token}
+    });
+    if(!r.ok){
+      console.error('Token invalid');
+      localStorage.clear();
+      location.href='/login.html';
+      return;
+    }
+    const user=await r.json();
+    console.log('Current user:', user);
+    if(user.role!=='admin'){
+      console.error('User is not admin:', user.role);
+      alert('Access denied: You are not an admin');
+      location.href='/index.html';
+      return;
+    }
+    if(user.blocked){
+      console.error('User is blocked');
+      alert('Your account has been blocked');
+      localStorage.clear();
+      location.href='/login.html';
+      return;
+    }
+    document.getElementById('adminName').textContent='👤 '+user.name;
+    localStorage.setItem('userName', user.name);
+    localStorage.setItem('userRole', user.role);
+  }catch(err){
+    console.error('Admin verification failed:', err);
+    localStorage.clear();
+    location.href='/login.html';
+  }
+}
+
+verifyAdmin();
+
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2800)}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(tab+'-tab').classList.add('active');
+  if(tab==='dashboard')loadDashboard();
+  if(tab==='products')loadProducts();
+  if(tab==='orders')loadOrders();
+  if(tab==='users')loadUsers();
+  if(tab==='analytics')loadAnalytics();
+}
+
+async function loadProducts(){
+  const r=await fetch('/api/products');
+  const products=await r.json();
+  const table=document.getElementById('productsTable');
+  if(!products.length){table.innerHTML='<div class="empty-state"><div class="empty-state-icon">📦</div><p>No products found</p></div>';return}
+  table.innerHTML=`
+    <table>
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${products.map(p=>`
+          <tr>
+            <td>${p.image?`<img src="${p.image}" class="product-img" onerror="this.src='/image/default.jpg'">`:'📦'}</td>
+            <td><strong>${p.name}</strong></td>
+            <td>${p.category}</td>
+            <td>₹${p.price.toLocaleString('en-IN')} ${p.discount>0?`<span style="color:#fbbf24;font-size:12px">(${p.discount}% OFF)</span>`:''}</td>
+            <td>${p.stock}</td>
+            <td>
+              <button class="action-btn btn-edit" onclick="openEditModal('${p._id}',${p.price},${p.originalPrice||0},${p.discount||0},${p.stock})">✏️ Edit</button>
+              <button class="action-btn btn-delete" onclick="deleteProduct('${p._id}')">🗑️ Delete</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function addProduct(e){
+  e.preventDefault();
+  const data={
+    name:document.getElementById('pName').value,
+    category:document.getElementById('pCategory').value,
+    price:Number(document.getElementById('pPrice').value),
+    originalPrice:Number(document.getElementById('pOriginalPrice').value)||0,
+    discount:Number(document.getElementById('pDiscount').value)||0,
+    stock:Number(document.getElementById('pStock').value),
+    image:document.getElementById('pImage').value,
+    description:document.getElementById('pDescription').value
+  };
+  console.log('Adding product with token:', token ? 'Present' : 'Missing');
+  const r=await fetch('/api/admin/products',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify(data)
+  });
+  const d=await r.json();
+  console.log('Add product response:', d);
+  if(r.ok){toast('✅ Product added successfully!');document.getElementById('addProductForm').reset();switchTab('products')}
+  else toast('❌ Error: '+d.error);
+}
+
+function openEditModal(id,price,originalPrice,discount,stock){
+  document.getElementById('editId').value=id;
+  document.getElementById('editPrice').value=price;
+  document.getElementById('editOriginalPrice').value=originalPrice;
+  document.getElementById('editDiscount').value=discount;
+  document.getElementById('editStock').value=stock;
+  document.getElementById('editModal').classList.add('active');
+}
+
+function closeModal(){document.getElementById('editModal').classList.remove('active')}
+
+async function updateProduct(e){
+  e.preventDefault();
+  const id=document.getElementById('editId').value;
+  const data={
+    price:Number(document.getElementById('editPrice').value),
+    originalPrice:Number(document.getElementById('editOriginalPrice').value)||0,
+    discount:Number(document.getElementById('editDiscount').value)||0,
+    stock:Number(document.getElementById('editStock').value)
+  };
+  console.log('Updating product with token:', token ? 'Present' : 'Missing');
+  const r=await fetch('/api/admin/products/'+id,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify(data)
+  });
+  const d=await r.json();
+  console.log('Update product response:', d);
+  if(r.ok){toast('✅ Product updated successfully!');closeModal();loadProducts()}
+  else toast('❌ Error: '+d.error);
+}
+
+async function deleteProduct(id){
+  if(!confirm('Are you sure you want to delete this product?'))return;
+  console.log('Deleting product with token:', token ? 'Present' : 'Missing');
+  const r=await fetch('/api/admin/products/'+id,{
+    method:'DELETE',
+    headers:{'Authorization':'Bearer '+token}
+  });
+  const d=await r.json();
+  console.log('Delete product response:', d);
+  if(r.ok){toast('✅ Product deleted successfully!');loadProducts()}
+  else toast('❌ Error: '+d.error);
+}
+
+async function loadOrders(){
+  const r=await fetch('/api/admin/orders',{headers:{'Authorization':'Bearer '+token}});
+  const orders=await r.json();
+  const table=document.getElementById('ordersTable');
+  if(!orders.length){table.innerHTML='<div class="empty-state"><div class="empty-state-icon">📋</div><p>No orders found</p></div>';return}
+  table.innerHTML=`
+    <table>
+      <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${orders.map(o=>`
+          <tr>
+            <td><small>${o._id.slice(-8)}</small></td>
+            <td>${o.user?.name||'Unknown'}<br><small style="color:rgba(255,255,255,.6)">${o.user?.email||''}</small></td>
+            <td>₹${o.total.toLocaleString('en-IN')}</td>
+            <td><span class="status-badge status-${o.status}">${o.status.replace(/_/g,' ')}</span></td>
+            <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+            <td>
+              <select onchange="updateOrderStatus('${o._id}',this.value)" style="padding:6px;border-radius:8px;border:1px solid rgba(124,58,237,.3);background:rgba(30,27,75,.5);color:#fff;font-size:12px">
+                <option value="">Update Status</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="out_for_delivery">Out for Delivery</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function updateOrderStatus(orderId,status){
+  if(!status)return;
+  try{
+    const r=await fetch(`/api/admin/orders/${orderId}/status`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({status})
+    });
+    const d=await r.json();
+    if(r.ok){toast('✅ '+d.message);loadOrders()}
+    else toast('❌ '+d.error);
+  }catch(err){
+    toast('❌ Failed to update status');
+  }
+}
+
+async function loadDashboard(){
+  try{
+    const r=await fetch('/api/analytics/dashboard',{headers:{'Authorization':'Bearer '+token}});
+    const d=await r.json();
+    const statsGrid=document.getElementById('statsGrid');
+    statsGrid.innerHTML=`
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value">${d.totalProducts}</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value">${d.totalOrders}</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">${d.totalUsers}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">₹${(d.totalRevenue/1000).toFixed(0)}K</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👁️</div>
+        <div class="stat-value">${d.mostViewed?.views||0}</div>
+        <div class="stat-label">Most Viewed: ${d.mostViewed?.name||'N/A'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">${d.mostSold?.sold||0}</div>
+        <div class="stat-label">Most Sold: ${d.mostSold?.name||'N/A'}</div>
+      </div>
+    `;
+    const recentTable=document.getElementById('recentOrdersTable');
+    if(d.recentOrders?.length>0){
+      recentTable.innerHTML=`
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            ${d.recentOrders.map(o=>`
+              <tr>
+                <td>#${o._id.slice(-8)}</td>
+                <td>${o.user?.name||'N/A'}</td>
+                <td>₹${o.total.toLocaleString('en-IN')}</td>
+                <td><span class="status-badge status-${o.status}">${o.status.replace(/_/g,' ')}</span></td>
+                <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }else{
+      recentTable.innerHTML='<div class="empty-state"><div class="empty-state-icon">📋</div><p>No recent orders</p></div>';
+    }
+  }catch(err){
+    console.error('Failed to load dashboard:',err);
+  }
+}
+
+async function loadUsers(){
+  try{
+    const r=await fetch('/api/admin/users',{headers:{'Authorization':'Bearer '+token}});
+    const users=await r.json();
+    const table=document.getElementById('usersTable');
+    if(!users.length){table.innerHTML='<div class="empty-state"><div class="empty-state-icon">👥</div><p>No users found</p></div>';return}
+    table.innerHTML=`
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${users.map(u=>`
+            <tr>
+              <td>${u.name}</td>
+              <td>${u.email}</td>
+              <td><span class="user-status ${u.role==='admin'?'user-admin':'user-active'}">${u.role}</span></td>
+              <td><span class="user-status ${u.blocked?'user-blocked':'user-active'}">${u.blocked?'Blocked':'Active'}</span></td>
+              <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+              <td>
+                ${u.role!=='admin'?`
+                  ${u.blocked?`<button class="action-btn btn-edit" onclick="unblockUser('${u._id}')">🔓 Unblock</button>`:`<button class="action-btn btn-delete" onclick="blockUser('${u._id}')">🚫 Block</button>`}
+                  <button class="action-btn btn-delete" onclick="deleteUser('${u._id}')">🗑️ Delete</button>
+                `:'-'}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }catch(err){
+    console.error('Failed to load users:',err);
+  }
+}
+
+async function blockUser(userId){
+  if(!confirm('Are you sure you want to block this user?'))return;
+  try{
+    const r=await fetch(`/api/admin/users/${userId}/block`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});
+    if(r.ok){toast('✅ User blocked');loadUsers()}
+    else toast('❌ Failed to block user');
+  }catch(err){
+    toast('❌ Failed to block user');
+  }
+}
+
+async function unblockUser(userId){
+  try{
+    const r=await fetch(`/api/admin/users/${userId}/unblock`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});
+    if(r.ok){toast('✅ User unblocked');loadUsers()}
+    else toast('❌ Failed to unblock user');
+  }catch(err){
+    toast('❌ Failed to unblock user');
+  }
+}
+
+async function deleteUser(userId){
+  if(!confirm('Are you sure you want to delete this user? This action cannot be undone.'))return;
+  try{
+    const r=await fetch(`/api/admin/users/${userId}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});
+    if(r.ok){toast('✅ User deleted');loadUsers()}
+    else toast('❌ Failed to delete user');
+  }catch(err){
+    toast('❌ Failed to delete user');
+  }
+}
+
+async function loadAnalytics(){
+  try{
+    const salesR=await fetch('/api/analytics/sales?period=30d',{headers:{'Authorization':'Bearer '+token}});
+    const salesD=await salesR.json();
+    renderBarChart('salesChart',salesD.labels,salesD.data);
+    
+    const catR=await fetch('/api/analytics/category-sales',{headers:{'Authorization':'Bearer '+token}});
+    const catD=await catR.json();
+    renderBarChart('categoryChart',catD.labels,catD.data);
+    
+    const topR=await fetch('/api/analytics/top-products',{headers:{'Authorization':'Bearer '+token}});
+    const topD=await topR.json();
+    const topTable=document.getElementById('topProductsTable');
+    if(topD.length>0){
+      topTable.innerHTML=`
+        <table>
+          <thead><tr><th>Product</th><th>Category</th><th>Sold</th><th>Price</th></tr></thead>
+          <tbody>
+            ${topD.map(p=>`
+              <tr>
+                <td>${p.name}</td>
+                <td>${p.category}</td>
+                <td>${p.sold}</td>
+                <td>₹${p.price.toLocaleString('en-IN')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }else{
+      topTable.innerHTML='<div class="empty-state"><div class="empty-state-icon">🏆</div><p>No sales data yet</p></div>';
+    }
+  }catch(err){
+    console.error('Failed to load analytics:',err);
+  }
+}
+
+function renderBarChart(containerId,labels,data){
+  const container=document.getElementById(containerId);
+  if(!data||data.length===0){
+    container.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,.6)">No data available</div>';
+    return;
+  }
+  const maxValue=Math.max(...data);
+  container.innerHTML=`
+    <div class="bar-chart">
+      ${labels.map((label,i)=>`
+        <div class="bar" style="height:${(data[i]/maxValue)*100}%">
+          <span class="bar-value">${data[i]>=1000?(data[i]/1000).toFixed(1)+'K':data[i]}</span>
+          <span class="bar-label">${label.length>10?label.slice(0,8)+'...':label}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function logout(){
+  localStorage.removeItem('token');localStorage.removeItem('userName');localStorage.removeItem('userRole');
+  toast('👋 Logged out successfully');setTimeout(()=>location.href='/login.html',800);
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
